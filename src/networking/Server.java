@@ -9,9 +9,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 
 public class Server {
+	String name;
+	
 	private int port;
 
 	private ServerSocket server;
@@ -20,11 +24,12 @@ public class Server {
 	ObjectOutputStream os;
 	ObjectInputStream is;
 
-	public Server(int port) {
+	public Server(int port, String name) {
 		this.port = port;
+		this.name = name;
 	}
 
-	public void start(){
+	public void start(JLabel label){
 		try {
 			server = new ServerSocket(port, 100);
 
@@ -37,8 +42,7 @@ public class Server {
 
 			while (connection.isConnected()) {
 				try {
-					JOptionPane.showMessageDialog(null, is.readObject());
-					System.out.println(is.readObject());
+					label.setText((String)is.readObject());
 				}catch(EOFException e) {
 					JOptionPane.showMessageDialog(null, "Connection Lost");
 					System.exit(0);
@@ -62,10 +66,13 @@ public class Server {
 		return port;
 	}
 
-	public void sendClick() {
+	public void sendClick(JTextArea area, JLabel label) {
+		String s = "<html>" + "<br> " + name + ": " + area.getText() + "<html>";
+		label.setText(label.getText() + s);
+		area.setText("");
 		try {
 			if (os != null) {
-				os.writeObject("CLICK SENT FROM SERVER");
+				os.writeObject(label.getText());
 				os.flush();
 			}
 		} catch (IOException e) {

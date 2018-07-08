@@ -6,9 +6,13 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 
 public class Client {
+	String name;
+	
 	private String ip;
 	private int port;
 
@@ -17,12 +21,13 @@ public class Client {
 	ObjectOutputStream os;
 	ObjectInputStream is;
 
-	public Client(String ip, int port) {
+	public Client(String ip, int port, String name) {
 		this.ip = ip;
 		this.port = port;
+		this.name = name;
 	}
 
-	public void start(){
+	public void start(JLabel label){
 		try {
 
 			connection = new Socket(ip, port);
@@ -40,8 +45,7 @@ public class Client {
 		
 		while (connection.isConnected()) {
 			try {
-				JOptionPane.showMessageDialog(null, is.readObject());
-				System.out.println(is.readObject());
+				label.setText((String)is.readObject());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -49,11 +53,14 @@ public class Client {
 		}
 	}
 	
-	public void sendClick() {
+	public void sendClick(JTextArea area, JLabel label) {
+		String s = "<html>" + "<br> " + name + ": " + area.getText() + "<html>";
+		label.setText(label.getText() + s);
+		area.setText("");
 		try {
 			if (os != null) {
-				os.writeObject("CLICK SENT FROM CLIENT");
 				os.flush();
+				os.writeObject(label.getText());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

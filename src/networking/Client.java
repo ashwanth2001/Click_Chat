@@ -48,7 +48,8 @@ public class Client {
 				label.setText((String)is.readObject());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Disconnected from server");
+				break;
 			}
 		}
 	}
